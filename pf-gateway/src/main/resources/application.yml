@@ -1,0 +1,23 @@
+server:
+  port: 10000
+  user: http://usercenter.stalary.com
+  max-http-header-size: 8192
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos.stalary.com
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+  zipkin:
+    base-url: http://zipkin.stalary.com
+  sleuth:
+    sampler:
+      probability: 1.0
+logging:
+  level:
+    com.stalary.pf.gateway.client: DEBUG # feign日志
+    com.alibaba.nacos.client.naming: WARN

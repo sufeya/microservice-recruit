@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <properties>
+        <spring-boot.version>2.0.7.RELEASE</spring-boot.version>
+        <spring-cloud.version>Finchley.SR2</spring-cloud.version>
+        <nacos.version>0.2.1.RELEASE</nacos.version>
+        <sentinel.version>0.2.1.RELEASE</sentinel.version>
+        <feign.version>2.0.2.RELEASE</feign.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <docker.image.prefix>stalary</docker.image.prefix>
+        <java.version>1.8</java.version>
+        <skipTests>true</skipTests>
+    </properties>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.stalary</groupId>
+    <artifactId>pf</artifactId>
+    <version>0.1</version>
+    <packaging>pom</packaging>
+    <description>recruit system</description>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.7.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <modules>
+        <!-- 网关服务 -->
+        <module>pf-gateway</module>
+        <!-- 外部服务 -->
+        <module>pf-outside</module>
+        <!-- 用户服务 -->
+        <module>pf-user</module>
+        <!-- 招聘服务 -->
+        <module>pf-recruit</module>
+        <!-- 简历服务 -->
+        <module>pf-resume</module>
+        <!-- 推送服务 -->
+        <module>pf-push</module>
+        <!-- 消息服务 -->
+        <module>pf-message</module>
+        <!-- 消费服务 -->
+        <module>pf-consumer</module>
+    </modules>
+
+    <repositories>
+        <repository>
+            <id>aliyun-repository</id>
+            <name>aliyun repository</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- spring boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- spring cloud -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zipkin</artifactId>
+        </dependency>
+        <!-- nacos -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <version>${nacos.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <version>${nacos.version}</version>
+        </dependency>
+        <!-- 0.8.0的client才支持namespace -->
+        <dependency>
+            <groupId>com.alibaba.nacos</groupId>
+            <artifactId>nacos-client</artifactId>
+            <version>0.8.0</version>
+        </dependency>
+        <!-- feign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${feign.version}</version>
+        </dependency>
+        <!-- lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <configuration>
+                    <serverId>docker-maven</serverId>
+                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <maintainer>stalary@163.com</maintainer>
+                    <baseImage>openjdk:8-jdk-alpine</baseImage>
+                    <!-- 设置打包时的tag -->
+                    <imageTags>
+                        <imageTag>0.2.0</imageTag>
+                        <imageTag>latest</imageTag>
+                    </imageTags>
+                    <!-- 打包完毕后推送镜像 -->
+                    <pushImage>true</pushImage>
+                    <!-- 推送tag -->
+                    <pushImageTag>true</pushImageTag>
+                    <!-- 覆盖tag -->
+                    <forceTags>true</forceTags>
+                    <entryPoint>["java", "-jar", "-Duser.timezone=GMT+08", "/${project.build.finalName}.jar"]
+                    </entryPoint>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

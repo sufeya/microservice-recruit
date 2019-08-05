@@ -1,0 +1,25 @@
+server:
+  port: 10017
+  max-http-header-size: 8192
+spring:
+  data:
+    mongodb:
+      username: root
+      password: li197910
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos.stalary.com
+    sentinel:
+      transport:
+        port: 10003
+        dashboard: sentinel.stalary.com
+  zipkin:
+    base-url: http://zipkin.stalary.com
+  sleuth:
+    sampler:
+      probability: 1.0
+logging:
+  level:
+    com.stalary.pf.resume.client: DEBUG # feign日志
+debug: true

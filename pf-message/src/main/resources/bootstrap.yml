@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: nacos.stalary.com
+        file-extension: yml
+        shared-dataids: mysql.yml,printlog.yml
+        refreshable-dataids: mysql.yml
+  profiles:
+    active: prod
+  application:
+    name: pf-message

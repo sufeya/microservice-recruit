@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: nacos.stalary.com
+        file-extension: yml
+        shared-dataids: auth.yml,printlog.yml,gateway.yml
+        refreshable-dataids: auth.yml,gateway.yml
+  profiles:
+    active: prod
+  application:
+    name: pf-gateway
